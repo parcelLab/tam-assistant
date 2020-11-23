@@ -27,11 +27,9 @@ export function activate(context: vscode.ExtensionContext) {
         let editor: vscode.TextEditor | undefined = vscode.window.activeTextEditor
         if (!editor) return
         if (editor.document.languageId !== 'javascript') {
-            vscode.window.showInformationMessage('Not a javascript file')
             return
         }
         if (!/conf\/user\/trigger/.test(editor.document.fileName)) {
-            vscode.window.showInformationMessage('Not a trigger file')
             return
         }
         let triggerFile = await import(editor.document.fileName)
