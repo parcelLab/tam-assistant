@@ -2,7 +2,7 @@
 	"name": "tam-assistant",
 	"displayName": "tam-assistant",
 	"description": "",
-	"version": "0.0.2",
+	"version": "0.0.3",
 	"publisher": "Al",
 	"engines": {
 		"vscode": "^1.50.0"

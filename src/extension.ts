@@ -61,7 +61,6 @@ export function activate(context: vscode.ExtensionContext) {
     context.subscriptions.push(disposable);
 
     disposable = vscode.commands.registerCommand('tam-assistant.setUpEnv', async () => {
-        vscode.window.showInformationMessage('Attempting to setUpEnv!')
         var extensionList = await execShell('code --list-extensions')
         if (!extensionList.includes('chenxsan.vscode-standardjs')) {
             console.log(await execShell('code --install-extension chenxsan.vscode-standardjs'))
