@@ -1,0 +1,105 @@
+{
+	"name": "tam-assistant",
+	"displayName": "tam-assistant",
+	"description": "",
+	"version": "0.0.1",
+	"publisher": "Al",
+	"engines": {
+		"vscode": "^1.50.0"
+	},
+	"categories": [
+		"Other"
+	],
+	"activationEvents": [
+		"onCommand:tam-assistant.checkFile",
+		"onStartupFinished"
+	],
+	"main": "./out/extension.js",
+	"contributes": {
+		"commands": [
+			{
+				"command": "tam-assistant.checkFile",
+				"title": "Check Trigger File"
+			},
+			{
+				"command": "tam-assistant.setUpEnv",
+				"title": "Set Up TAM Environment"
+			},
+			{
+				"command": "tam-assistant.isInList",
+				"title": "Insert isInList Function",
+				"category": "lib"
+			},
+			{
+				"command": "tam-assistant.startsWith",
+				"title": "Insert startsWith Function",
+				"category": "lib"
+			},
+			{
+				"command": "tam-assistant.endsWith",
+				"title": "Insert endsWith Function",
+				"category": "lib"
+			},
+			{
+				"command": "tam-assistant.contains",
+				"title": "Insert contains Function",
+				"category": "lib"
+			},
+			{
+				"command": "tam-assistant.contactedWithMessage",
+				"title": "Insert contactedWithMessage Function",
+				"category": "lib"
+			},
+			{
+				"command": "tam-assistant.contactedWithOneOfMessages",
+				"title": "Insert contactedWithOneOfMessages Function",
+				"category": "lib"
+			},
+			{
+				"command": "tam-assistant.contactedWithAllOfMessages",
+				"title": "Insert contactedWithAllOfMessages Function",
+				"category": "lib"
+			},
+			{
+				"command": "tam-assistant.goLive",
+				"title": "Insert goLive Function",
+				"category": "lib"
+			}
+		],
+		"configuration": {
+			"title": "TAM Assistant",
+			"properties": {
+				"tamAssistant.checkOnSave": {
+					"type": "boolean",
+					"default": false,
+					"description": "Check trigger files on save."
+				}
+			}
+		}
+	},
+	"scripts": {
+		"vscode:prepublish": "npm run compile",
+		"compile": "tsc -p ./",
+		"lint": "eslint src --ext ts",
+		"watch": "tsc -watch -p ./",
+		"pretest": "npm run compile && npm run lint",
+		"test": "node ./out/test/runTest.js"
+	},
+	"devDependencies": {
+		"@types/vscode": "^1.50.0",
+		"@types/glob": "^7.1.3",
+		"@types/mocha": "^8.0.0",
+		"@types/node": "^12.11.7",
+		"eslint": "^7.9.0",
+		"@typescript-eslint/eslint-plugin": "^4.1.1",
+		"@typescript-eslint/parser": "^4.1.1",
+		"glob": "^7.1.6",
+		"mocha": "^8.1.3",
+		"typescript": "^4.0.2",
+		"vscode-test": "^1.4.0"
+	},
+	"dependencies": {
+		"bson": "^4.2.0",
+		"mongodb-language-model": "^1.6.1"
+	}
+}
