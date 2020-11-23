@@ -2,6 +2,10 @@
 
 Helpful helper for tams, checking trigger files, automatically setting up standardjs and eslint with the neat settings and more!
 
+## Installation
+Download the latest release and run
+`code --install-extension release.vsix`
+
 ## Features
 
 todo 
