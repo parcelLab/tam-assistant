@@ -4,6 +4,10 @@
 	"description": "parcelLab tam-assistant, helps our lovely TAM team to identify problems faster and write new filters easier",
 	"version": "1.0.0",
 	"publisher": "parcelLab",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/parcelLab/tam-assistant.git"
+	},
 	"engines": {
 		"vscode": "^1.50.0"
 	},
