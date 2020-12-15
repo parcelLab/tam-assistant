@@ -6,9 +6,11 @@ import {
     workspace, ExtensionContext, TextDocument, languages, Uri,
     Diagnostic, DiagnosticCollection, TextDocumentContentChangeEvent
 } from 'vscode';
-var accepts = require('mongodb-language-model').accepts
+const accepts = require('mongodb-language-model').accepts
 import { EJSON } from "bson";
 import * as cp from 'child_process';
+const got = require('got');
+const download = require('download');
 
 let diagnosticCollection: vscode.DiagnosticCollection;
 
@@ -22,8 +24,6 @@ export function activate(context: vscode.ExtensionContext) {
     let disposable = vscode.commands.registerCommand('tam-assistant.checkFile', async () => {
         diagnosticCollection.clear();
         vscode.Range
-        // The code you place here will be executed every time your command is executed
-        console.log("checking file")
         let editor: vscode.TextEditor | undefined = vscode.window.activeTextEditor
         if (!editor) return
         if (editor.document.languageId !== 'javascript') {
@@ -49,7 +49,7 @@ export function activate(context: vscode.ExtensionContext) {
             let rangeArr = getPositionOf(editor.document.getText(), `Message: '${elem.Message}'`, true)
             if (!diagnostics) { diagnostics = []; }
             for (const range of rangeArr) {
-                var diagnostic = new vscode.Diagnostic(range, elem.error, 1)
+                const diagnostic = new vscode.Diagnostic(range, elem.error, 1)
                 diagnostic.source = 'tam-assistant'
                 diagnostics.push(diagnostic);
             }
@@ -61,15 +61,15 @@ export function activate(context: vscode.ExtensionContext) {
     context.subscriptions.push(disposable);
 
     disposable = vscode.commands.registerCommand('tam-assistant.setUpEnv', async () => {
-        var extensionList = await execShell('code --list-extensions')
+        const extensionList = await execShell('code --list-extensions')
         if (!extensionList.includes('chenxsan.vscode-standardjs')) {
-            console.log(await execShell('code --install-extension chenxsan.vscode-standardjs'))
+            await execShell('code --install-extension chenxsan.vscode-standardjs')
             // enable autoFixOnSave
             vscode.workspace.getConfiguration().update('standard.autoFixOnSave', true, true)
             vscode.window.showInformationMessage('Successfully installed standardjs!')
         }
         if (!extensionList.includes('dbaeumer.vscode-eslint')) {
-            console.log(await execShell('code --install-extension dbaeumer.vscode-eslint'))
+            await execShell('code --install-extension dbaeumer.vscode-eslint')
             // set correct workspace config
             vscode.workspace.getConfiguration().update('eslint.workingDirectories', ["./", "./conf/user/trigger"], true)
             vscode.window.showInformationMessage('Successfully installed esLint!')
@@ -86,6 +86,26 @@ export function activate(context: vscode.ExtensionContext) {
             vscode.commands.executeCommand('tam-assistant.checkFile')
         }
     }));
+
+
+    disposable = vscode.commands.registerCommand('tam-assistant.updateAssistant', async () => {
+        const download_url = JSON.parse((await got('https://api.github.com/repos/parcelLab/tam-assistant/releases/latest')).body).assets[0].browser_download_url
+
+        const fileNameTMP = download_url.split("/")
+        const fileName = fileNameTMP[fileNameTMP.length - 1]
+
+        const fileVersion = fileName.split('.vsix')[0].split('tam-assistant-')[1]
+        const installedVersions = await execShell('code --list-extensions --show-versions')
+        if (!installedVersions.includes(`tam-assistant@${fileVersion}`)) {
+            await download(download_url, 'tmp')
+            await execShell(`code --install-extension /tmp/${fileName}`)
+            vscode.window.showInformationMessage('Successfully updated the assistant, enjoy your fresh features! 🔥')
+        }
+    })
+
+    context.subscriptions.push(disposable);
+
+    vscode.commands.executeCommand('tam-assistant.updateAssistant')
 
     let registerInsertCommand = (functionName: string, functionCall: string) => {
         disposable = vscode.commands.registerCommand(`tam-assistant.${functionName}`, () => {
@@ -112,7 +132,6 @@ export function activate(context: vscode.ExtensionContext) {
 export function deactivate() { }
 
 function checkTriggerFile(requiredFile: object) {
-    console.log(requiredFile)
 
     let wrongFilters = []
     for (const trigger in requiredFile) {
@@ -132,15 +151,6 @@ function checkTriggerFile(requiredFile: object) {
                 continue
             }
 
-            //check for valid mongo query syntax
-            // try {
-            //     accepts(EJSON.stringify(status.Filter, { legacy: true }))
-            // } catch (error) {
-            //     console.log(EJSON.stringify(status.Filter, { legacy: true }))
-            //     status.error = error.message
-            //     wrongFilters.push(status)
-            //     continue
-            // }
             if (!accepts(EJSON.stringify(status.Filter, { legacy: true }))) {
                 status.error = `Invalid mongo query syntax: ${EJSON.stringify(status.Filter, { legacy: true })}`
                 wrongFilters.push(status)
@@ -154,22 +164,22 @@ function checkTriggerFile(requiredFile: object) {
 
 // performance was never an option
 function getPositionOf(str: string, searchStr: string, caseSensitive: boolean) {
-    var searchStrLen = searchStr.length;
+    const searchStrLen = searchStr.length;
     if (searchStrLen == 0) {
         return [];
     }
-    var startIndex = 0, index, indices = [];
+    let startIndex = 0, index, indices = [];
     if (!caseSensitive) {
         str = str.toLowerCase();
         searchStr = searchStr.toLowerCase();
     }
     while ((index = str.indexOf(searchStr, startIndex)) > -1) {
-        var tempString = str.substring(0, index);
-        var lineNumber = tempString.split('\n').length - 1;
-        var line = str.split('\n')[lineNumber]
-        var startOfLine = line.indexOf(searchStr)
-        var endOfLine = line.length
-        var range = new vscode.Range(lineNumber, startOfLine, lineNumber, endOfLine)
+        const tempString = str.substring(0, index);
+        const lineNumber = tempString.split('\n').length - 1;
+        const line = str.split('\n')[lineNumber]
+        const startOfLine = line.indexOf(searchStr)
+        const endOfLine = line.length
+        const range = new vscode.Range(lineNumber, startOfLine, lineNumber, endOfLine)
         indices.push(range);
         startIndex = index + searchStrLen;
     }

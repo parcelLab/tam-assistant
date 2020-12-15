@@ -1,9 +1,9 @@
 {
 	"name": "tam-assistant",
 	"displayName": "tam-assistant",
-	"description": "",
-	"version": "0.0.3",
-	"publisher": "Al",
+	"description": "parcelLab tam-assistant, helps our lovely TAM team to identify problems faster and write new filters easier",
+	"version": "1.0.0",
+	"publisher": "parcelLab",
 	"engines": {
 		"vscode": "^1.50.0"
 	},
@@ -24,6 +24,10 @@
 			{
 				"command": "tam-assistant.setUpEnv",
 				"title": "Set Up TAM Environment"
+			},
+			{
+				"command": "tam-assistant.updateAssistant",
+				"title": "Manually update TAM Assistant"
 			},
 			{
 				"command": "tam-assistant.isInList",
@@ -100,6 +104,8 @@
 	},
 	"dependencies": {
 		"bson": "^4.2.0",
+		"download": "^8.0.0",
+		"got": "^11.8.0",
 		"mongodb-language-model": "^1.6.1"
 	}
 }
